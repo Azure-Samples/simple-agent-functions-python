@@ -1,0 +1,2 @@
+azure-functions
+github-copilot-sdk
