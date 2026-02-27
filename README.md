@@ -48,6 +48,12 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
    AGENT_URL=https://<your-function-app>.azurewebsites.net uv run chat.py
    ```
 
+## Source Code
+
+The agent logic is in [`function_app.py`](function_app.py). It creates a `CopilotClient`, configures a session with a system message (Asimov's Three Laws of Robotics), and exposes an HTTP endpoint (`/api/ask`) that accepts a prompt and returns the agent's response.
+
+[`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
+
 ## Deploy Microsoft Foundry Resources
 
 If you prefer to use your own models via BYOK and don't already have a Microsoft Foundry project with a model deployed:
@@ -66,12 +72,6 @@ This provisions all resources and configures local development automatically.
 - Storage, monitoring, and all necessary RBAC role assignments
 - Optional: Search for vector store (disabled by default)
 - Optional: Cosmos DB for agent thread storage (disabled by default)
-
-## Source Code
-
-The agent logic is in [`function_app.py`](function_app.py). It creates a `CopilotClient`, configures a session with a system message (Asimov's Three Laws of Robotics), and exposes an HTTP endpoint (`/api/ask`) that accepts a prompt and returns the agent's response.
-
-[`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
 
 ## Using Microsoft Foundry (BYOK)
 
