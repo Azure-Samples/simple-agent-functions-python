@@ -11,26 +11,9 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
   - **GitHub Copilot subscription** — models are available automatically
   - **Bring Your Own Key (BYOK)** — use an API key from [Microsoft Foundry](https://ai.azure.com) (see [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md))
 
-## Deploy Microsoft Foundry Resources (if needed)
-
-If you're using BYOK and don't already have a Microsoft Foundry project with a model deployed:
-
-```bash
-azd auth login
-azd up
-```
-
-This provisions all resources and configures local development automatically.
-
-### What Gets Deployed
-
-- Microsoft Foundry project with GPT-5-mini model
-- Azure Functions app (Python, Flex Consumption plan)
-- Storage, monitoring, and all necessary RBAC role assignments
-- Optional: Search for vector store (disabled by default)
-- Optional: Cosmos DB for agent thread storage (disabled by default)
-
 ## Quickstart
+
+> **Want to use your own models?** See [Deploy Microsoft Foundry Resources](#deploy-microsoft-foundry-resources) below to provision a Microsoft Foundry project instead of using GitHub Copilot models.
 
 1. Clone the repository
 
@@ -64,6 +47,25 @@ This provisions all resources and configures local development automatically.
    ```bash
    AGENT_URL=https://<your-function-app>.azurewebsites.net uv run chat.py
    ```
+
+## Deploy Microsoft Foundry Resources
+
+If you prefer to use your own models via BYOK and don't already have a Microsoft Foundry project with a model deployed:
+
+```bash
+azd auth login
+azd up
+```
+
+This provisions all resources and configures local development automatically.
+
+### What Gets Deployed
+
+- Microsoft Foundry project with GPT-5-mini model
+- Azure Functions app (Python, Flex Consumption plan)
+- Storage, monitoring, and all necessary RBAC role assignments
+- Optional: Search for vector store (disabled by default)
+- Optional: Cosmos DB for agent thread storage (disabled by default)
 
 ## Source Code
 
