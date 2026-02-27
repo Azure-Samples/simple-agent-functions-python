@@ -1,6 +1,6 @@
 import os
 import azure.functions as func
-from copilot import CopilotClient
+from copilot import CopilotClient, PermissionHandler
 
 app = func.FunctionApp()
 client = CopilotClient()
@@ -16,7 +16,10 @@ instructions = """
 
 def _session_config():
     """Build session config, optionally using Azure Foundry as provider."""
-    config = {"system_message": {"content": instructions}}
+    config = {
+        "system_message": {"content": instructions},
+        "on_permission_request": PermissionHandler.approve_all,
+    }
     base_url = os.environ.get("AZURE_OPENAI_ENDPOINT")
     api_key = os.environ.get("AZURE_OPENAI_API_KEY")
     model = os.environ.get("AZURE_OPENAI_MODEL", "gpt-5-mini")
