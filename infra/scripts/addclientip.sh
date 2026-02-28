@@ -34,8 +34,8 @@ if [[ -f "$configFile" ]]; then
         fi
     fi
 else
-    echo "Config file $configFile not found. Assuming VNet is enabled."
-    vnetDisabled=false
+    echo "Config file $configFile not found. Assuming VNet is not enabled."
+    vnetDisabled=true
 fi
 
 if [ "$vnetDisabled" = true ]; then
