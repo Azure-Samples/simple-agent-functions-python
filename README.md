@@ -45,7 +45,13 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
    Set `AGENT_URL` to point to a deployed instance:
 
    ```bash
-   AGENT_URL=https://<your-function-app>.azurewebsites.net uv run chat.py
+   AGENT_URL=https://<your-function-app>.azurewebsites.net FUNCTION_KEY=<your-function-key> uv run chat.py
+   ```
+
+   Get your function key from the [Azure Portal](https://portal.azure.com) → your Function App → **App keys**, or via the CLI:
+
+   ```bash
+   az functionapp keys list -n <your-function-app> -g <resource-group> --query "functionKeys.default" -o tsv
    ```
 
 ## Source Code

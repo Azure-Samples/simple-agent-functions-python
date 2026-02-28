@@ -2,7 +2,8 @@
 import os
 import urllib.request
 
-BASE_URL = os.environ.get("AGENT_URL", "http://localhost:7071")
+BASE_URL = os.environ.get("AGENT_URL", "http://localhost:7071").rstrip("/")
+FUNCTION_KEY = os.environ.get("FUNCTION_KEY", "")
 
 print(f"=== Simple Agent Chat ===")
 print(f"Endpoint: {BASE_URL}/api/ask")
@@ -15,6 +16,8 @@ while True:
         break
 
     url = f"{BASE_URL}/api/ask"
+    if FUNCTION_KEY:
+        url += f"?code={FUNCTION_KEY}"
     try:
         req = urllib.request.Request(url, data=message.encode(), method="POST")
         with urllib.request.urlopen(req) as resp:
