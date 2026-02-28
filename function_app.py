@@ -45,7 +45,7 @@ async def ask(req: func.HttpRequest) -> func.HttpResponse:
     session = await client.create_session(_session_config())
 
     reply = await session.send_and_wait({"prompt": prompt})
-    response_text = reply.data.content if reply else "No response"
+    response_text = (reply.data.content if reply and reply.data else None) or "No response"
 
     await session.destroy()
 
