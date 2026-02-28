@@ -22,14 +22,18 @@ def _session_config():
     }
     base_url = os.environ.get("AZURE_OPENAI_ENDPOINT")
     api_key = os.environ.get("AZURE_OPENAI_API_KEY")
-    model = os.environ.get("AZURE_OPENAI_MODEL", "gpt-5-mini")
-    if base_url and api_key:
+    model = os.environ.get("AZURE_OPENAI_DEPLOYMENT_NAME") or os.environ.get("AZURE_OPENAI_MODEL", "gpt-5-mini")
+    if base_url:
         config["model"] = model
-        config["provider"] = {
-            "type": "azure",
-            "base_url": base_url,
-            "api_key": api_key,
-        }
+        provider = {"type": "azure", "base_url": base_url}
+        if api_key:
+            provider["api_key"] = api_key
+        else:
+            from azure.identity import DefaultAzureCredential
+            credential = DefaultAzureCredential()
+            token = credential.get_token("https://cognitiveservices.azure.com/.default")
+            provider["bearer_token"] = token.token
+        config["provider"] = provider
     return config
 
 

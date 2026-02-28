@@ -1,2 +1,3 @@
 azure-functions
+azure-identity
 github-copilot-sdk
