@@ -2,6 +2,8 @@
 
 A simple AI agent built with the GitHub Copilot SDK, running as an Azure Function.
 
+> Looking for [C#](https://github.com/Azure-Samples/simple-agent-functions-dotnet) or [TypeScript](https://github.com/Azure-Samples/simple-agent-functions-typescript)?
+
 ## Prerequisites
 
 - [Python 3.11+](https://docs.astral.sh/uv/getting-started/installation/) (via [uv](https://docs.astral.sh/uv/))
