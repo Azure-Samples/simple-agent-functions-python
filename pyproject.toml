@@ -5,7 +5,7 @@ description = "Azure Functions and Copilot SDK sample that creates daily GitHub 
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "azure-functions",
+    "azure-functions>=2.2.0",
     "azure-identity",
     "github-copilot-sdk",
 ]

@@ -514,7 +514,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "azure-functions" },
+    { name = "azure-functions", specifier = ">=2.2.0" },
     { name = "azure-identity" },
     { name = "github-copilot-sdk" },
 ]

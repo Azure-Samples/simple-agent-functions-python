@@ -44,6 +44,20 @@ def _session_config():
             token = credential.get_token("https://cognitiveservices.azure.com/.default")
             provider["bearer_token"] = token.token
         config["provider"] = provider
+    mcp_server_url = os.environ.get("COPILOT_MCP_SERVER_URL")
+    if mcp_server_url:
+        headers = {}
+        mcp_extension_key = os.environ.get("MCP_EXTENSION_KEY")
+        if mcp_extension_key:
+            headers["x-functions-key"] = mcp_extension_key
+        config["mcp_servers"] = {
+            "repo-digest-functions": {
+                "type": "http",
+                "url": mcp_server_url,
+                "headers": headers,
+                "tools": ["get_repo_digest_context"],
+            }
+        }
     return config
 
 
@@ -153,8 +167,28 @@ def _repo_digest_context(repository: str) -> dict:
 
 async def _run_digest(prompt: str) -> str:
     repository = _repository_from_prompt(prompt)
-    context = _repo_digest_context(repository)
-    digest_prompt = f"""
+    config = _session_config()
+    if "mcp_servers" in config:
+        digest_prompt = f"""
+Create a concise daily repo digest for {repository}.
+
+Use the `get_repo_digest_context` MCP tool to get live GitHub data before writing the digest.
+
+User request:
+{prompt}
+
+Return:
+1. A one-line summary.
+2. Pull requests updated in the last 24 hours.
+3. Issues updated in the last 24 hours.
+4. Workflow failures from the last 24 hours.
+5. Suggested next actions.
+
+If a section has no items, say "None found".
+"""
+    else:
+        context = _repo_digest_context(repository)
+        digest_prompt = f"""
 Create a concise daily repo digest for {repository}.
 
 User request:
@@ -172,12 +206,24 @@ Return:
 
 If a section has no items, say "None found".
 """
-    session = await client.create_session(_session_config())
+    session = await client.create_session(**config)
     try:
         reply = await session.send_and_wait({"prompt": digest_prompt})
         return (reply.data.content if reply and reply.data else None) or "No response"
     finally:
         await session.destroy()
+
+
+@app.mcp_tool()
+@app.mcp_tool_property(
+    arg_name="repository",
+    description="Public GitHub repository in owner/name format. Defaults to microsoft-foundry/foundry-samples.",
+    is_required=False,
+)
+def get_repo_digest_context(repository: str = DEFAULT_REPOSITORY) -> str:
+    """Return live GitHub data for a daily repository digest."""
+    repository = repository or os.environ.get("GITHUB_REPOSITORY", DEFAULT_REPOSITORY)
+    return json.dumps(_repo_digest_context(repository), indent=2)
 
 
 @app.route(route="ask", methods=["POST"])

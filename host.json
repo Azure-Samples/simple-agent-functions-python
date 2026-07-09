@@ -1,6 +1,13 @@
 {
   "version": "2.0",
   "functionTimeout": "00:30:00",
+  "extensions": {
+    "mcp": {
+      "instructions": "Use the repo digest tools to fetch live public GitHub repository data for daily summaries.",
+      "serverName": "repo-digest-functions",
+      "serverVersion": "1.0.0"
+    }
+  },
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
