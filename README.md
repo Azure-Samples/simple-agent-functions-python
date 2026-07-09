@@ -103,7 +103,8 @@ For local and cloud hosted-agent runs, that value becomes the `GITHUB_REPOSITORY
 
 ## Files
 
-- `main.py`: gathers GitHub data, defines the digest tool, creates the Agent Framework agent, and starts the hosted Responses server.
+- `main.py`: starts the hosted Agent Framework Responses server.
+- `repo_digest_agent.py`: defines the digest automation agent, gathers GitHub data, and wires the Foundry model/tool calls.
 - `agent.yaml`: describes the hosted agent runtime and protocol.
 - `azure.yaml`: declares the Foundry project, hosted agent, and daily routine.
 - `chat.py`: local console client for interactive questions.
