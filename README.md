@@ -60,7 +60,7 @@ The agent logic is in [`function_app.py`](function_app.py). It creates a `Copilo
 
 - An HTTP endpoint at `/api/ask` for chat or API requests.
 - A timer-triggered function named `daily_repo_digest` that runs the digest at 9 AM Pacific.
-- An MCP tool named `get_repo_digest_context` at `/runtime/webhooks/mcp`.
+- An optional MCP tool named `get_repo_digest_context` at `/runtime/webhooks/mcp`.
 
 [`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
 
@@ -72,68 +72,25 @@ Local development uses [`pyproject.toml`](pyproject.toml) with `uv sync` and `uv
 
 The timer trigger uses the Azure Functions NCRONTAB schedule `0 0 16,17 * * *`. Azure Functions timer schedules run in UTC for this Linux Functions sample, so the function wakes at both possible 9 AM Pacific UTC offsets and only creates a digest when the current `America/Los_Angeles` hour is 9. This keeps the sample aligned with Pacific daylight and standard time without adding a separate scheduler service.
 
-## MCP extension tutorial
+## MCP extension
 
-This sample also exposes the live repo data fetcher as an Azure Functions MCP extension tool, then shows how to consume that tool from the Copilot SDK. The implementation uses the Python v2 Functions programming model:
+This sample includes an optional Functions-hosted MCP tool for the repo digest data fetcher. For the Azure Functions side, start with [Tutorial: Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial). To call a Functions-hosted remote MCP service from the Copilot SDK, pass the service URL into `mcp_servers`:
 
 ```python
-@app.mcp_tool()
-@app.mcp_tool_property(
-    arg_name="repository",
-    description="Public GitHub repository in owner/name format.",
-    is_required=False,
+session = await client.create_session(
+    on_permission_request=PermissionHandler.approve_all,
+    mcp_servers={
+        "repo-digest-functions": {
+            "type": "http",
+            "url": "https://<app-name>.azurewebsites.net/runtime/webhooks/mcp",
+            "headers": {"x-functions-key": "<mcp_extension system key>"},
+            "tools": ["get_repo_digest_context"],
+        }
+    },
 )
-def get_repo_digest_context(repository: str = DEFAULT_REPOSITORY) -> str:
-    return json.dumps(_repo_digest_context(repository), indent=2)
 ```
 
-The Functions MCP extension exposes the server at:
-
-```text
-http://localhost:7071/runtime/webhooks/mcp
-```
-
-For a deployed Function App, use:
-
-```text
-https://<app-name>.azurewebsites.net/runtime/webhooks/mcp
-```
-
-Remote endpoints require the `mcp_extension` system key unless you change `host.json` to use anonymous webhook authorization. Get the deployed key with:
-
-```bash
-az functionapp keys list \
-  --resource-group <resource-group> \
-  --name <function-app-name> \
-  --query systemKeys.mcp_extension \
-  --output tsv
-```
-
-To have this sample consume its own MCP tool from the Copilot SDK, set:
-
-```bash
-export COPILOT_MCP_SERVER_URL="http://localhost:7071/runtime/webhooks/mcp"
-
-# Only needed for a deployed Function App endpoint.
-export MCP_EXTENSION_KEY="<mcp_extension system key>"
-```
-
-When `COPILOT_MCP_SERVER_URL` is set, `function_app.py` passes this MCP server into `CopilotClient.create_session`:
-
-```python
-config["mcp_servers"] = {
-    "repo-digest-functions": {
-        "type": "http",
-        "url": mcp_server_url,
-        "headers": headers,
-        "tools": ["get_repo_digest_context"],
-    }
-}
-```
-
-Then the digest prompt tells the model to call `get_repo_digest_context` for live GitHub data. If `COPILOT_MCP_SERVER_URL` is not set, the sample falls back to fetching public GitHub REST data directly before sending the prompt to the model.
-
-For the underlying Functions MCP extension docs, see [Tutorial: Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial), [Model context protocol bindings for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-mcp), and [MCP tool trigger for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-mcp-tool-trigger). For the Copilot SDK side, see [Using MCP servers with the GitHub Copilot SDK](https://github.com/github/copilot-sdk/blob/main/docs/features/mcp.md).
+See [README-MCP.md](README-MCP.md) for the focused MCP extension and Copilot SDK loopback notes.
 
 ## Deploy Microsoft Foundry Resources
 
@@ -173,7 +130,7 @@ See the [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/by
 
 ## Next steps
 
-- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [Model context protocol bindings for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-mcp) and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
+- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [MCP extension notes for this sample](README-MCP.md), [Tutorial: Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial), and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
 - Build durable, long-running Functions workflows: [Durable Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview) and [Azure Functions timer triggers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer).
 
 ## Learn More
