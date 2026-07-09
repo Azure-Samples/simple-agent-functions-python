@@ -1,6 +1,6 @@
-# Simple Agent QuickStart (Python Foundry Hosted Agent)
+# Repo Digest Agent QuickStart (Python Foundry Hosted Agent)
 
-A simple AI agent built with Microsoft Agent Framework and hosted by Microsoft Foundry Hosted Agents. This branch pivots the original Azure Functions host to Foundry Agent Service while keeping the same sample idea: Asimov's Three Laws of Robotics summarized as a TLDR in exactly five words.
+A simple AI agent built with Microsoft Agent Framework and hosted by Microsoft Foundry Hosted Agents. It creates live or scheduled GitHub repository digests for recent pull requests, issues, and workflow failures. The default repository is `microsoft-foundry/foundry-samples`.
 
 > Looking for equivalent Functions samples? See [Python](https://github.com/Azure-Samples/simple-agent-functions-python), [C#](https://github.com/Azure-Samples/simple-agent-functions-dotnet), or [TypeScript](https://github.com/Azure-Samples/simple-agent-functions-typescript).
 
@@ -53,7 +53,7 @@ A simple AI agent built with Microsoft Agent Framework and hosted by Microsoft F
 5. Test the local agent in a new terminal:
 
    ```bash
-   azd ai agent invoke --local "what are the laws"
+   azd ai agent invoke --local "Create a concise daily repo digest."
    ```
 
    Or use curl directly:
@@ -61,7 +61,7 @@ A simple AI agent built with Microsoft Agent Framework and hosted by Microsoft F
    ```bash
    curl -sS -X POST http://localhost:8088/responses \
      -H "Content-Type: application/json" \
-     -d '{"input": "what are the laws", "stream": false}'
+     -d '{"input": "Create a concise daily repo digest.", "stream": false}'
    ```
 
    You can also use the interactive chat client:
@@ -79,14 +79,16 @@ A simple AI agent built with Microsoft Agent Framework and hosted by Microsoft F
 7. Invoke the deployed hosted agent:
 
    ```bash
-   azd ai agent invoke "what are the laws"
+   azd ai agent invoke "Create a concise daily repo digest."
    ```
 
 ## Source Code
 
-The agent logic is in [`main.py`](main.py). It creates a `FoundryChatClient`, configures an Agent Framework `Agent` with the sample instructions, and exposes it through `ResponsesHostServer` using the OpenAI-compatible Responses protocol. [`agent.yaml`](agent.yaml) describes the hosted agent runtime and protocol for the Foundry agent tooling.
+The agent logic is in [`main.py`](main.py). It creates a `FoundryChatClient`, configures an Agent Framework `Agent`, and exposes it through `ResponsesHostServer` using the OpenAI-compatible Responses protocol. [`agent.yaml`](agent.yaml) describes the hosted agent runtime and protocol for the Foundry agent tooling.
 
-[`chat.py`](chat.py) is a lightweight console client that POSTs messages to `/responses`. It defaults to `http://localhost:8088` for local runs. Set `AGENT_URL` to point it at another compatible endpoint.
+Ask for a digest with an optional repo such as `microsoft-foundry/foundry-samples`; if you omit the repo, the agent uses `microsoft-foundry/foundry-samples` by default. The sample uses public GitHub APIs for a no-secret quickstart. For private repos or user-scoped access, connect the official GitHub remote MCP server at `https://api.githubcopilot.com/mcp/` with OAuth in Foundry.
+
+[`chat.py`](chat.py) is a lightweight console client that POSTs messages to `/responses`. It defaults to `http://localhost:8088` for local runs. Use it to ask live follow-up questions about the default repo or another public repo. Set `AGENT_URL` to point it at another compatible endpoint.
 
 ## Configuration
 
@@ -102,10 +104,11 @@ Hosted Agents inject `FOUNDRY_PROJECT_ENDPOINT`, `AZURE_AI_MODEL_DEPLOYMENT_NAME
 ## Next steps
 
 - Add tools and data sources via MCP: [Connect an MCP server on Azure Functions to Foundry Agent Service](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-foundry-tools) and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
-- Build durable, long-running agents: [Durable Extension for Microsoft Agent Framework](https://learn.microsoft.com/en-us/agent-framework/integrations/durable-extension).
+- Schedule the repo digest with Foundry Routines: [Automate agents with routines](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-routines). Use a recurring prompt like `Create a daily repo digest for microsoft-foundry/foundry-samples.`
 
 ## Learn More
 
 - [Foundry Hosted Agents with Agent Framework](https://learn.microsoft.com/en-us/agent-framework/hosting/foundry-hosted-agent?pivots=programming-language-python)
 - [Quickstart: Deploy your first hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-hosted-agent?pivots=azd)
+- [Durable Extension for Microsoft Agent Framework](https://learn.microsoft.com/en-us/agent-framework/integrations/durable-extension)
 - [Foundry hosted Agent Framework Python samples](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/agent-framework)

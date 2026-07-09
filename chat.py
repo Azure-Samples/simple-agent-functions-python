@@ -1,4 +1,4 @@
-"""Console chat client for the Simple Agent hosted agent."""
+"""Console chat client for the Repo Digest hosted agent."""
 import json
 import os
 import urllib.request
@@ -17,8 +17,9 @@ def _extract_response_text(response):
     return json.dumps(response)
 
 
-print("=== Simple Agent Chat ===")
+print("=== Repo Digest Agent Chat ===")
 print(f"Endpoint: {BASE_URL}/responses")
+print("Try: Create a concise daily repo digest.")
 print(f"Type 'exit' or 'quit' to end.\n")
 
 while True:
