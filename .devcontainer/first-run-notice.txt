@@ -1,16 +1,11 @@
-👋 Welcome to the Functions Codespace! You are on the Functions Quickstarts image.
-It includes everything needed to run through our tutorials and quickstart applications.
+Welcome to the Foundry Hosted Agent Codespace.
 
-To run a function enter folder with host.json and run:
+Install dependencies and run the hosted agent locally:
 ```
-cd src
-func start
+uv sync
+azd ai agent run
 ```
 
-📚 Setup complete.  Functions docs can be found at: https://learn.microsoft.com/en-us/azure/azure-functions/
->**Note** it is a best practice to create Virtual Environments before doing the `pip install` to avoid dependency issues/collisions, or if you are running in CodeSpaces.  See [Python Environments in VS Code](https://code.visualstudio.com/docs/python/environments#_creating-environments) for more information.
+The local hosted-agent endpoint listens on http://localhost:8088/responses.
 
-Automatically started Azurite in a new terminal window first via:
-```
-npx azurite --location ~/.azurite
-```
+Docs: https://learn.microsoft.com/en-us/agent-framework/hosting/foundry-hosted-agent?pivots=programming-language-python

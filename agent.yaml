@@ -1,0 +1,6 @@
+kind: hosted
+name: simple-agent-foundry-hosted-python
+description: A simple Agent Framework agent hosted by Microsoft Foundry.
+protocols:
+  - protocol: responses
+    version: 1.0.0

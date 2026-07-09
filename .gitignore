@@ -144,9 +144,6 @@ cython_debug/
 .DS_Store
 Thumbs.db
 
-# Azure Functions
+# Azure Developer CLI and local agent state
+.azure/
 local.settings.json
-__blobstorage__/
-__queuestorage__/
-__azurite_db*__.json
-.python_packages/

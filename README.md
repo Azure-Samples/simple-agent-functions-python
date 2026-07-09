@@ -1,106 +1,106 @@
-# Simple Agent QuickStart (Python Copilot SDK)
+# Simple Agent QuickStart (Python Foundry Hosted Agent)
 
-A simple AI agent built with the GitHub Copilot SDK, running as an Azure Function.
+A simple AI agent built with Microsoft Agent Framework and hosted by Microsoft Foundry Hosted Agents. This branch pivots the original Azure Functions host to Foundry Agent Service while keeping the same sample idea: Asimov's Three Laws of Robotics summarized as a TLDR in exactly five words.
 
-> Looking for [C#](https://github.com/Azure-Samples/simple-agent-functions-dotnet) or [TypeScript](https://github.com/Azure-Samples/simple-agent-functions-typescript)?
+> Looking for equivalent Functions samples? See [Python](https://github.com/Azure-Samples/simple-agent-functions-python), [C#](https://github.com/Azure-Samples/simple-agent-functions-dotnet), or [TypeScript](https://github.com/Azure-Samples/simple-agent-functions-typescript).
 
 ## Prerequisites
 
-- [Python 3.11+](https://docs.astral.sh/uv/getting-started/installation/) (via [uv](https://docs.astral.sh/uv/))
-- [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local#install-the-azure-functions-core-tools)
-- [Azure Developer CLI (azd)](https://aka.ms/azd-install) (only needed for deploying Microsoft Foundry resources)
-- Access to an AI model via one of:
-  - **GitHub Copilot subscription** — models are available automatically
-  - **Bring Your Own Key (BYOK)** — use an API key from [Microsoft Foundry](https://ai.azure.com) (see [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md))
+- [Python 3.13+](https://www.python.org/downloads/) via [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+- [Azure Developer CLI 1.27.0+](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd)
+- The `microsoft.foundry` azd extension:
+
+  ```bash
+  azd ext install microsoft.foundry
+  ```
+
+  If `azd ext list` shows the Foundry extensions as incompatible, update azd:
+
+  ```bash
+  brew uninstall azd && brew install --cask azure/azd/azd
+  ```
+
+- An Azure subscription with access to Microsoft Foundry Hosted Agents. Foundry model usage is billed per token, so set spending alerts before deploying real workloads.
 
 ## Quickstart
 
-> **Want to use your own models?** See [Deploy Microsoft Foundry Resources](#deploy-microsoft-foundry-resources) below to provision a Microsoft Foundry project instead of using GitHub Copilot models.
+1. Authenticate:
 
-1. Clone the repository
+   ```bash
+   az login
+   azd auth login
+   ```
 
 2. Install dependencies:
 
    ```bash
-   uv venv
-   source .venv/bin/activate  # macOS/Linux
-   # .venv\Scripts\activate   # Windows
-   uv pip install -r requirements.txt
+   uv sync
    ```
 
-3. Run the function locally:
+3. Configure a Foundry project and model. If you do not already have a project, `azd provision` can create the project, model deployment, Application Insights, and container registry from `azure.yaml`.
 
    ```bash
-   func start
+   azd provision
    ```
 
-4. Test the agent (in a new terminal):
+4. Run the hosted agent locally:
 
    ```bash
-   # Interactive chat client
+   azd ai agent run
+   ```
+
+5. Test the local agent in a new terminal:
+
+   ```bash
+   azd ai agent invoke --local "what are the laws"
+   ```
+
+   Or use curl directly:
+
+   ```bash
+   curl -sS -X POST http://localhost:8088/responses \
+     -H "Content-Type: application/json" \
+     -d '{"input": "what are the laws", "stream": false}'
+   ```
+
+   You can also use the interactive chat client:
+
+   ```bash
    uv run chat.py
-
-   # Or use curl directly
-   curl -X POST http://localhost:7071/api/ask -d "what are the laws"
    ```
 
-   To chat with a deployed instance, grab the URL and function key from your `azd` environment:
+6. Deploy to Foundry Agent Service:
 
    ```bash
-   export AGENT_URL=$(azd env get-value SERVICE_API_URI)
-   export FUNCTION_KEY=$(az functionapp keys list \
-     -n $(azd env get-value AZURE_FUNCTION_APP_NAME) \
-     -g $(azd env get-value RESOURCE_GROUP) \
-     --query "functionKeys.default" -o tsv)
+   azd deploy
+   ```
 
-   uv run chat.py
+7. Invoke the deployed hosted agent:
+
+   ```bash
+   azd ai agent invoke "what are the laws"
    ```
 
 ## Source Code
 
-The agent logic is in [`function_app.py`](function_app.py). It creates a `CopilotClient`, configures a session with a system message (Asimov's Three Laws of Robotics), and exposes an HTTP endpoint (`/api/ask`) that accepts a prompt and returns the agent's response.
+The agent logic is in [`main.py`](main.py). It creates a `FoundryChatClient`, configures an Agent Framework `Agent` with the sample instructions, and exposes it through `ResponsesHostServer` using the OpenAI-compatible Responses protocol. [`agent.yaml`](agent.yaml) describes the hosted agent runtime and protocol for the Foundry agent tooling.
 
-[`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
+[`chat.py`](chat.py) is a lightweight console client that POSTs messages to `/responses`. It defaults to `http://localhost:8088` for local runs. Set `AGENT_URL` to point it at another compatible endpoint.
 
-## Deploy Microsoft Foundry Resources
+## Configuration
 
-If you prefer to use your own models via BYOK and don't already have a Microsoft Foundry project with a model deployed:
-
-```bash
-azd auth login
-azd up
-```
-
-This provisions all resources and configures local development automatically.
-
-### What Gets Deployed
-
-- Microsoft Foundry project with GPT-5-mini model
-- Azure Functions app (Python, Flex Consumption plan)
-- Storage, monitoring, and all necessary RBAC role assignments
-- Optional: Search for vector store (disabled by default)
-- Optional: Cosmos DB for agent thread storage (disabled by default)
-
-## Using Microsoft Foundry (BYOK)
-
-By default the agent uses GitHub Copilot's models. To use your own model from Microsoft Foundry instead, set these environment variables:
+For local runs without `azd ai agent run`, copy `.env.example` to `.env` and set:
 
 ```bash
-export AZURE_OPENAI_ENDPOINT="https://<your-ai-services>.openai.azure.com/"
-export AZURE_OPENAI_API_KEY="<your-api-key>"
-export AZURE_OPENAI_MODEL="gpt-5-mini"  # optional, defaults to gpt-5-mini
+FOUNDRY_PROJECT_ENDPOINT="https://<your-ai-services>.services.ai.azure.com/api/projects/<your-project-name>"
+AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-5-mini"
 ```
 
-**Getting these values:**
-- If you ran `azd up`, the endpoint is already in your environment — run `azd env get-values | grep AZURE_OPENAI_ENDPOINT`
-- For the API key, go to [Azure Portal](https://portal.azure.com) → your AI Services resource → **Keys and Endpoint** → select the **Azure OpenAI** tab
-- Or find both in the [Microsoft Foundry portal](https://ai.azure.com) under your project settings
-
-See the [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md) for details.
+Hosted Agents inject `FOUNDRY_PROJECT_ENDPOINT`, `AZURE_AI_MODEL_DEPLOYMENT_NAME`, and Application Insights telemetry settings into the deployed container.
 
 ## Learn More
 
-- [GitHub Copilot SDK](https://github.com/github/copilot-sdk)
-- [Copilot SDK Python docs](https://github.com/github/copilot-sdk/tree/main/python)
-- [BYOK (Bring Your Own Key)](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md)
-- [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/)
+- [Foundry Hosted Agents with Agent Framework](https://learn.microsoft.com/en-us/agent-framework/hosting/foundry-hosted-agent?pivots=programming-language-python)
+- [Quickstart: Deploy your first hosted agent](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-hosted-agent?pivots=azd)
+- [Foundry hosted Agent Framework Python samples](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/agent-framework)
