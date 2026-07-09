@@ -90,7 +90,7 @@ session = await client.create_session(
 )
 ```
 
-See [README-MCP.md](README-MCP.md) for the focused MCP extension and Copilot SDK loopback notes.
+See [MCP-extension-notes.md](MCP-extension-notes.md) for the focused MCP extension and Copilot SDK loopback notes.
 
 ## Deploy Microsoft Foundry Resources
 
@@ -130,7 +130,7 @@ See the [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/by
 
 ## Next steps
 
-- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [MCP extension notes for this sample](README-MCP.md), [Tutorial: Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial), and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
+- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [MCP extension notes for this sample](MCP-extension-notes.md), [Tutorial: Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial), and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
 - Build durable, long-running Functions workflows: [Durable Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview) and [Azure Functions timer triggers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer).
 
 ## Learn More
