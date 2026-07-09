@@ -1,6 +1,6 @@
-# Simple Agent QuickStart (Python Copilot SDK)
+# Daily Repo Digest QuickStart (Python Copilot SDK on Azure Functions)
 
-A simple AI agent built with the GitHub Copilot SDK, running as an Azure Function.
+A simple AI agent built with the GitHub Copilot SDK, running as an Azure Function. It creates live daily GitHub repository digests for recent pull requests, issues, and workflow failures. The default repository is `microsoft-foundry/foundry-samples`.
 
 > Looking for [C#](https://github.com/Azure-Samples/simple-agent-functions-dotnet) or [TypeScript](https://github.com/Azure-Samples/simple-agent-functions-typescript)?
 
@@ -34,14 +34,15 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
    func start
    ```
 
-4. Test the agent (in a new terminal):
+4. Test the digest agent (in a new terminal):
 
    ```bash
    # Interactive chat client
    uv run chat.py
 
    # Or use curl directly
-   curl -X POST http://localhost:7071/api/ask -d "what are the laws"
+   curl -X POST http://localhost:7071/api/ask \
+     -d "Create a concise daily repo digest for microsoft-foundry/foundry-samples."
    ```
 
    To chat with a deployed instance, grab the URL and function key from your `azd` environment:
@@ -58,9 +59,18 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
 
 ## Source Code
 
-The agent logic is in [`function_app.py`](function_app.py). It creates a `CopilotClient`, configures a session with a system message (Asimov's Three Laws of Robotics), and exposes an HTTP endpoint (`/api/ask`) that accepts a prompt and returns the agent's response.
+The agent logic is in [`function_app.py`](function_app.py). It creates a `CopilotClient`, fetches live public GitHub data through REST APIs, and asks the model to produce a concise daily digest. The sample keeps the Azure Functions hosting model from this repo and exposes:
+
+- An HTTP endpoint at `/api/ask` for chat or API requests.
+- A timer-triggered function named `daily_repo_digest` that runs the digest at 9 AM Pacific.
 
 [`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
+
+Ask for a digest with an optional public repo such as `microsoft-foundry/foundry-samples`. If you omit the repo, the agent uses `microsoft-foundry/foundry-samples` by default. Set `GITHUB_REPOSITORY` to change the default repository. Set `GITHUB_TOKEN` only if you want higher public GitHub API rate limits.
+
+## Daily Schedule
+
+The timer trigger uses the Azure Functions NCRONTAB schedule `0 0 16,17 * * *`. Azure Functions timer schedules run in UTC for this Linux Functions sample, so the function wakes at both possible 9 AM Pacific UTC offsets and only creates a digest when the current `America/Los_Angeles` hour is 9. This keeps the sample aligned with Pacific daylight and standard time without adding a separate scheduler service.
 
 ## Deploy Microsoft Foundry Resources
 
