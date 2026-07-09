@@ -8,6 +8,7 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
 
 - Python 3.13+ via [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local#install-the-azure-functions-core-tools)
+- [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite) for local Azure Functions storage
 - [Azure Developer CLI (azd)](https://aka.ms/azd-install) (only needed for deploying Microsoft Foundry resources)
 - Access to an AI model via one of:
   - **GitHub Copilot subscription** - models are available automatically
@@ -25,13 +26,19 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
    uv sync
    ```
 
-3. Run the function locally:
+3. Start Azurite in a separate terminal:
+
+   ```bash
+   azurite --skipApiVersionCheck --silent --location ./.azurite
+   ```
+
+4. Run the function locally:
 
    ```bash
    uv run func start
    ```
 
-4. Test the digest agent (in a new terminal):
+5. Test the digest agent in another terminal:
 
    ```bash
    # Interactive chat client

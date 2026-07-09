@@ -208,10 +208,10 @@ If a section has no items, say "None found".
 """
     session = await client.create_session(**config)
     try:
-        reply = await session.send_and_wait({"prompt": digest_prompt})
+        reply = await session.send_and_wait(digest_prompt)
         return (reply.data.content if reply and reply.data else None) or "No response"
     finally:
-        await session.destroy()
+        await session.disconnect()
 
 
 @app.mcp_tool()
