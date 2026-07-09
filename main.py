@@ -18,14 +18,14 @@ load_dotenv()
 INSTRUCTIONS = """
 You create concise GitHub repository digests.
 
-- If the user asks for a repo digest and does not provide a repo, use microsoft-foundry/foundry-samples.
+- If the user asks for a repo digest and does not provide a repo, use Azure/azure-functions-host.
 - Call get_repo_digest when the user asks about recent repo activity, open PRs, new issues, closed issues, or failing workflow runs.
 - Summarize merged PRs, open PRs needing attention, new issues, closed issues, and failing workflow runs from the requested window.
 - Default to the last 24 hours unless the user asks for a different window.
 - Keep responses short and action-oriented.
 """
 DEFAULT_MODEL_DEPLOYMENT = "gpt-5-mini"
-DEFAULT_DIGEST_REPO = "microsoft-foundry/foundry-samples"
+DEFAULT_DIGEST_REPO = os.environ.get("GITHUB_REPOSITORY") or "Azure/azure-functions-host"
 GITHUB_API = "https://api.github.com"
 
 
@@ -37,13 +37,18 @@ def _project_endpoint() -> str:
 
 
 def _github_get(path: str) -> dict:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "simple-agent-foundry-hosted-python",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
     request = Request(
         f"{GITHUB_API}{path}",
-        headers={
-            "Accept": "application/vnd.github+json",
-            "User-Agent": "simple-agent-foundry-hosted-python",
-            "X-GitHub-Api-Version": "2022-11-28",
-        },
+        headers=headers,
     )
     try:
         with urlopen(request, timeout=20) as response:
@@ -57,7 +62,7 @@ def _github_get(path: str) -> dict:
 def get_repo_digest(
     repo: Annotated[
         str,
-        "GitHub repository in owner/name format. Defaults to microsoft-foundry/foundry-samples.",
+        "GitHub repository in owner/name format. Defaults to Azure/azure-functions-host.",
     ] = DEFAULT_DIGEST_REPO,
     hours: Annotated[int, "Number of hours of repo activity to include."] = 24,
 ) -> str:
