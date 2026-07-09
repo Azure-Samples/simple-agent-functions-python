@@ -6,7 +6,8 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
 
 ## Prerequisites
 
-- [Python 3.11+](https://docs.astral.sh/uv/getting-started/installation/) (via [uv](https://docs.astral.sh/uv/))
+- Python 3.13+
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local#install-the-azure-functions-core-tools)
 - [Azure Developer CLI (azd)](https://aka.ms/azd-install) (only needed for deploying Microsoft Foundry resources)
 - Access to an AI model via one of:
@@ -22,16 +23,13 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
 2. Install dependencies:
 
    ```bash
-   uv venv
-   source .venv/bin/activate  # macOS/Linux
-   # .venv\Scripts\activate   # Windows
-   uv pip install -r requirements.txt
+   uv sync
    ```
 
 3. Run the function locally:
 
    ```bash
-   func start
+   uv run func start
    ```
 
 4. Test the digest agent (in a new terminal):
@@ -67,6 +65,8 @@ The agent logic is in [`function_app.py`](function_app.py). It creates a `Copilo
 [`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
 
 Ask for a digest with an optional public repo such as `microsoft-foundry/foundry-samples`. If you omit the repo, the agent uses `microsoft-foundry/foundry-samples` by default. Set `GITHUB_REPOSITORY` to change the default repository. Set `GITHUB_TOKEN` only if you want higher public GitHub API rate limits.
+
+Local development uses [`pyproject.toml`](pyproject.toml) with `uv sync` and `uv run`. [`requirements.txt`](requirements.txt) is kept for Azure Functions packaging and should stay aligned with the dependencies in `pyproject.toml`.
 
 ## Daily Schedule
 
