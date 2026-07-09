@@ -60,7 +60,6 @@ The agent logic is in [`function_app.py`](function_app.py). It creates a `Copilo
 
 - An HTTP endpoint at `/api/ask` for chat or API requests.
 - A timer-triggered function named `daily_repo_digest` that runs the digest at 9 AM Pacific.
-- An optional MCP tool named `get_repo_digest_context` at `/runtime/webhooks/mcp`.
 
 [`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
 
@@ -71,26 +70,6 @@ Local development uses [`pyproject.toml`](pyproject.toml) with `uv sync` and `uv
 ## Daily Schedule
 
 The timer trigger uses the Azure Functions NCRONTAB schedule `0 0 16,17 * * *`. Azure Functions timer schedules run in UTC for this Linux Functions sample, so the function wakes at both possible 9 AM Pacific UTC offsets and only creates a digest when the current `America/Los_Angeles` hour is 9. This keeps the sample aligned with Pacific daylight and standard time without adding a separate scheduler service.
-
-## MCP extension
-
-This sample includes an optional Functions-hosted MCP tool for the repo digest data fetcher. For the Azure Functions side, start with [Tutorial: Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial). To call a Functions-hosted remote MCP service from the Copilot SDK, pass the service URL into `mcp_servers`:
-
-```python
-session = await client.create_session(
-    on_permission_request=PermissionHandler.approve_all,
-    mcp_servers={
-        "repo-digest-functions": {
-            "type": "http",
-            "url": "https://<app-name>.azurewebsites.net/runtime/webhooks/mcp",
-            "headers": {"x-functions-key": "<mcp_extension system key>"},
-            "tools": ["get_repo_digest_context"],
-        }
-    },
-)
-```
-
-See [MCP-extension-notes.md](MCP-extension-notes.md) for the focused MCP extension and Copilot SDK loopback notes.
 
 ## Deploy Microsoft Foundry Resources
 
