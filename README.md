@@ -99,6 +99,11 @@ AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-5-mini"
 
 Hosted Agents inject `FOUNDRY_PROJECT_ENDPOINT`, `AZURE_AI_MODEL_DEPLOYMENT_NAME`, and Application Insights telemetry settings into the deployed container.
 
+## Next steps
+
+- Add tools and data sources via MCP: [Connect an MCP server on Azure Functions to Foundry Agent Service](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-foundry-tools) and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
+- Build durable, long-running agents: [Durable Extension for Microsoft Agent Framework](https://learn.microsoft.com/en-us/agent-framework/integrations/durable-extension).
+
 ## Learn More
 
 - [Foundry Hosted Agents with Agent Framework](https://learn.microsoft.com/en-us/agent-framework/hosting/foundry-hosted-agent?pivots=programming-language-python)
