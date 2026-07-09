@@ -6,13 +6,12 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
 
 ## Prerequisites
 
-- Python 3.13+
-- [uv](https://docs.astral.sh/uv/getting-started/installation/)
+- Python 3.13+ via [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local#install-the-azure-functions-core-tools)
 - [Azure Developer CLI (azd)](https://aka.ms/azd-install) (only needed for deploying Microsoft Foundry resources)
 - Access to an AI model via one of:
-  - **GitHub Copilot subscription** — models are available automatically
-  - **Bring Your Own Key (BYOK)** — use an API key from [Microsoft Foundry](https://ai.azure.com) (see [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md))
+  - **GitHub Copilot subscription** - models are available automatically
+  - **Bring Your Own Key (BYOK)** - use an API key from [Microsoft Foundry](https://ai.azure.com) (see [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md))
 
 ## Quickstart
 
@@ -102,11 +101,16 @@ export AZURE_OPENAI_MODEL="gpt-5-mini"  # optional, defaults to gpt-5-mini
 ```
 
 **Getting these values:**
-- If you ran `azd up`, the endpoint is already in your environment — run `azd env get-values | grep AZURE_OPENAI_ENDPOINT`
-- For the API key, go to [Azure Portal](https://portal.azure.com) → your AI Services resource → **Keys and Endpoint** → select the **Azure OpenAI** tab
+- If you ran `azd up`, the endpoint is already in your environment. Run `azd env get-values | grep AZURE_OPENAI_ENDPOINT`
+- For the API key, go to [Azure Portal](https://portal.azure.com), your AI Services resource, **Keys and Endpoint**, then select the **Azure OpenAI** tab
 - Or find both in the [Microsoft Foundry portal](https://ai.azure.com) under your project settings
 
 See the [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/byok.md) for details.
+
+## Next steps
+
+- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [Use MCP with Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-extension) and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
+- Build durable, long-running Functions workflows: [Durable Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview) and [Azure Functions timer triggers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer).
 
 ## Learn More
 
