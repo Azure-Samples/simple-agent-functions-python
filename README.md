@@ -109,7 +109,7 @@ See the [BYOK docs](https://github.com/github/copilot-sdk/blob/main/docs/auth/by
 
 ## Next steps
 
-- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [Use MCP with Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-extension) and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
+- Add tools and data sources with Azure Functions custom bindings, Python helpers, or MCP integration: [Connect an MCP server on Azure Functions to Foundry Agent Service](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-foundry-tools) and [connect MCP server endpoints to Foundry agents](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol).
 - Build durable, long-running Functions workflows: [Durable Functions overview](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview) and [Azure Functions timer triggers](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer).
 
 ## Learn More
