@@ -3,6 +3,7 @@
 requiredVersions:
     extensions:
         azure.ai.agents: '>=0.1.34-preview'
+        azure.ai.routines: '>=1.0.0-beta.1'
 name: simple-agent-foundry-hosted-python
 metadata:
     template: simple-agent-foundry-hosted-python@1.0.0
@@ -20,6 +21,23 @@ services:
               sku:
                 capacity: 10
                 name: GlobalStandard
+    daily-repo-digest:
+        project: ""
+        host: azure.ai.routine
+        language: ""
+        uses:
+            - simple-agent-foundry-hosted-python
+        action:
+            agent_name: simple-agent-foundry-hosted-python
+            input: Create a concise daily repo digest for microsoft-foundry/foundry-samples.
+            type: invoke_agent_responses_api
+        description: Create a daily repo digest at 9 AM Pacific time.
+        enabled: true
+        triggers:
+            default:
+                cron_expression: "0 9 * * *"
+                time_zone: America/Los_Angeles
+                type: schedule
     simple-agent-foundry-hosted-python:
         project: ./
         host: azure.ai.agent
