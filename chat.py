@@ -7,7 +7,7 @@ FUNCTION_KEY = os.environ.get("FUNCTION_KEY", "")
 
 print(f"=== Repo Digest Agent Chat ===")
 print(f"Endpoint: {BASE_URL}/api/ask")
-print("Ask for a daily digest, or include a public repo like microsoft-foundry/foundry-samples.")
+print("Ask for a daily digest, or include a public repo like Azure/azure-functions-host.")
 print("Type 'exit' or 'quit' to end.\n")
 
 while True:

@@ -13,7 +13,7 @@ from copilot import CopilotClient, PermissionHandler
 app = func.FunctionApp()
 client = CopilotClient()
 
-DEFAULT_REPOSITORY = "microsoft-foundry/foundry-samples"
+DEFAULT_REPOSITORY = "Azure/azure-functions-host"
 PACIFIC_TIME = ZoneInfo("America/Los_Angeles")
 GITHUB_API = "https://api.github.com"
 
@@ -217,7 +217,7 @@ If a section has no items, say "None found".
 @app.mcp_tool()
 @app.mcp_tool_property(
     arg_name="repository",
-    description="Public GitHub repository in owner/name format. Defaults to microsoft-foundry/foundry-samples.",
+    description="Public GitHub repository in owner/name format. Defaults to Azure/azure-functions-host.",
     is_required=False,
 )
 def get_repo_digest_context(repository: str = DEFAULT_REPOSITORY) -> str:

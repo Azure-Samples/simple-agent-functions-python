@@ -1,6 +1,6 @@
 # Daily Repo Digest QuickStart (Python Copilot SDK on Azure Functions)
 
-A simple AI agent built with the GitHub Copilot SDK, running as an Azure Function. It creates live daily GitHub repository digests for recent pull requests, issues, and workflow failures. The default repository is `microsoft-foundry/foundry-samples`.
+A simple AI agent built with the GitHub Copilot SDK, running as an Azure Function. It creates live daily GitHub repository digests for recent pull requests, issues, and workflow failures. The default repository is `Azure/azure-functions-host`.
 
 > Looking for [C#](https://github.com/Azure-Samples/simple-agent-functions-dotnet) or [TypeScript](https://github.com/Azure-Samples/simple-agent-functions-typescript)?
 
@@ -39,7 +39,7 @@ A simple AI agent built with the GitHub Copilot SDK, running as an Azure Functio
 
    # Or use curl directly
    curl -X POST http://localhost:7071/api/ask \
-     -d "Create a concise daily repo digest for microsoft-foundry/foundry-samples."
+     -d "Create a concise daily repo digest for Azure/azure-functions-host."
    ```
 
    To chat with a deployed instance, grab the URL and function key from your `azd` environment:
@@ -63,7 +63,7 @@ The agent logic is in [`function_app.py`](function_app.py). It creates a `Copilo
 
 [`chat.py`](chat.py) is a lightweight console client that POSTs messages to the function in a loop, giving you an interactive chat experience. It defaults to `http://localhost:7071` but can be pointed at a deployed instance via the `AGENT_URL` environment variable.
 
-Ask for a digest with an optional public repo such as `microsoft-foundry/foundry-samples`. If you omit the repo, the agent uses `microsoft-foundry/foundry-samples` by default. Set `GITHUB_REPOSITORY` to change the default repository. Set `GITHUB_TOKEN` only if you want higher public GitHub API rate limits.
+Ask for a digest with an optional public repo such as `Azure/azure-functions-host`. If you omit the repo, the agent uses `Azure/azure-functions-host` by default. Set `GITHUB_REPOSITORY` to change the default repository. Set `GITHUB_TOKEN` only if you want higher public GitHub API rate limits.
 
 Local development uses [`pyproject.toml`](pyproject.toml) with `uv sync` and `uv run`. [`requirements.txt`](requirements.txt) is kept for Azure Functions packaging and should stay aligned with the dependencies in `pyproject.toml`.
 
