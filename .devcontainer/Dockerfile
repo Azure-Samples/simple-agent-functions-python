@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/vscode/devcontainers/python:dev-3.12-bookworm
+FROM mcr.microsoft.com/vscode/devcontainers/python:dev-3.13-bookworm
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Copy custom first notice message.
 COPY first-run-notice.txt /tmp/staging/
